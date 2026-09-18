@@ -1,0 +1,24 @@
+name: Trigger Anka report pipeline
+
+on:
+  schedule:
+    # 01:00 UTC = 09:00 Asia/Hong_Kong. Edit the cron expression to change
+    # the time, or add a second entry to this list to run more than once a day.
+    - cron: "0 1 * * *"
+  workflow_dispatch: {}   # lets you also fire it manually from the Actions tab
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the PythonAnywhere trigger endpoint
+        run: |
+          http_code=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X POST "https://yogakaar.pythonanywhere.com/trigger" \
+            -H "Authorization: Bearer ${{ secrets.TRIGGER_SECRET }}")
+          echo "HTTP status: $http_code"
+          cat /tmp/response.json
+          if [ "$http_code" != "200" ] && [ "$http_code" != "202" ]; then
+            echo "Trigger endpoint did not return success"
+            exit 1
+          fi

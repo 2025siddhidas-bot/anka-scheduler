@@ -2,9 +2,9 @@ name: Trigger Anka report pipeline
 
 on:
   schedule:
-    # 01:00 UTC = 09:00 Asia/Hong_Kong. Edit the cron expression to change
-    # the time, or add a second entry to this list to run more than once a day.
-    - cron: "0 1 * * *"
+    # Every 10 minutes. GitHub's minimum supported interval is 5 minutes;
+    # actual firing can lag a few minutes during high load, but is otherwise reliable.
+    - cron: "*/10 * * * *"
   workflow_dispatch: {}   # lets you also fire it manually from the Actions tab
 
 jobs:
